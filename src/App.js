@@ -1,22 +1,42 @@
+// import libraries
 import React from 'react';
 import { nest } from 'd3';
+
+// import components
 import QuestionGroups from './components/QuestionGroups';
 import Charts from './components/Charts';
 import './App.scss';
 
 export default class App extends React.Component {
+
   constructor(props){
     super(props);
     this.state = {};
   }
 
+  // QUESTION: Where is the data coming from? => GOTO:87
+  // Data is retrieved by fetchData(), stored on Heroku.
   generateInitialState = (data) => {
+
+    // create **empty object** to hold question groups
     let questionGroups = {};
+
+    // for each question listed in data.metaData, add to array
     for(let k in data.metaData.question_id){
+
+      // set current question using question_id
       let q = data.metaData.question_id[k];
+
+      // get parameters associated with current question
       let label = q.group;
-      let order = q.group_order
+      let order = q.group_order;
+
+      // if questionGroup does not already have a "label" object, create one
+      // each label contains 3 additional subelements: label, order, and ids, which is an array
+      // QUESTION: Where is questionGroups[label].label assigned?
       if(!questionGroups[label]) questionGroups[label] = {label, order, ids: []};
+
+      // add question_id to the array of ids
       questionGroups[label].ids.push(q.question_id);
     }
 
@@ -25,6 +45,7 @@ export default class App extends React.Component {
       responses: data.metaData.response_id,
       questions: data.metaData.question_id,
       data: data.data,
+      // fetch state
       isFetching: false,
       activeQuestionIds: this.props.questionIds,
       activeDemographic: null,
@@ -109,6 +130,7 @@ export default class App extends React.Component {
     return(
       <div className="varying-degrees-2018 full-app scroll-target" data-scroll-bottom-offset="-100vh" ref={(el)=>{this.el = el;}}>
         {this.state.data && <div className="row">
+
           <div className="col-12 col-lg-4 toggles-wrapper">
             {this.state.isFetching && <div className="blur" />}
           <QuestionGroups
@@ -117,8 +139,8 @@ export default class App extends React.Component {
             toggleQuestionGroups={this.toggleQuestionGroups}
             toggleDemographic={this.toggleDemographic} />
           </div>
-          <div className="col-12 col-lg-8 charts-wrapper">
 
+          <div className="col-12 col-lg-8 charts-wrapper">
           {!this.state.isFetching && <Charts questions={this.state.questions}
               responses={this.state.responses}
               scrollToCharts={this.scrollToCharts}

@@ -6,8 +6,10 @@ import './App.scss';
 
 export default class App extends React.Component {
   constructor(props){
+
     super(props);
 
+    // empty state
     this.state = {
       questionGroups: [],
       responses: {},
@@ -43,6 +45,7 @@ export default class App extends React.Component {
       .then((res)=>(
         res.json()
       )).then((data)=>{
+        // set state
         this.setState({
           responses: data.metaData.response_id,
           questions: data.metaData.question_id,
